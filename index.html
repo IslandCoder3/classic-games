@@ -6,530 +6,7 @@
 <title>Classic Games — Play. Relax. Have Fun.</title>
 <meta name="description" content="A modern online arcade of timeless browser games — Tetris, Chess, Snake, Minesweeper and more. No download, no account.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕹️</text></svg>">
-<style>
-/* =========================================================
-   CLASSIC GAMES — design tokens
-   Palette: near-black gaming HUD, amber marquee glow (brand/CTA),
-   acid-neon accent (hover/active states) — nodding to the
-   Rajdhani-forward, high-contrast gamer aesthetic of the brief.
-   Type: Rajdhani for everything (headings, UI, body) — one
-         confident, angular gaming face — plus Press Start 2P
-         used sparingly for the wordmark + score readouts,
-         grounded in real arcade scoreboards, not decor.
-   ========================================================= */
-
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Press+Start+2P&display=swap');
-
-:root{
-  --bg: #0a0c12;
-  --bg-soft: #0d1018;
-  --surface: #141822;
-  --surface-2: #1a1f2d;
-  --surface-border: #262c3d;
-  --text: #eef1f6;
-  --text-muted: #99a1b5;
-  --text-faint: #656d82;
-
-  --gold: #ffc24b;
-  --gold-soft: #ffdb96;
-  --violet: #8b6bff;
-  --cyan: #46dbe8;
-  --neon: #b6ff3f;
-  --neon-soft: #d8ffa0;
-  --green: #4ade80;
-  --red: #fb5d5d;
-
-  --radius-lg: 16px;
-  --radius-md: 12px;
-  --radius-sm: 7px;
-
-  --shadow-glow-gold: 0 0 0 1px rgba(255,194,75,0.25), 0 8px 30px -8px rgba(255,194,75,0.35);
-  --shadow-glow-violet: 0 0 0 1px rgba(182,255,63,0.3), 0 8px 30px -8px rgba(182,255,63,0.3);
-  --shadow-card: 0 1px 0 rgba(255,255,255,0.03) inset, 0 12px 24px -16px rgba(0,0,0,0.6);
-
-  --font-display: 'Rajdhani', system-ui, sans-serif;
-  --font-body: 'Rajdhani', system-ui, sans-serif;
-  --font-pixel: 'Press Start 2P', monospace;
-
-  --header-h: 68px;
-  --max-w: 1280px;
-}
-
-[data-theme="light"]{
-  --bg: #f5f4fb;
-  --bg-soft: #efeef9;
-  --surface: #ffffff;
-  --surface-2: #f2f1fb;
-  --surface-border: #e1e0f2;
-  --text: #1a1c2e;
-  --text-muted: #55597d;
-  --text-faint: #8b8eab;
-  --shadow-card: 0 1px 0 rgba(255,255,255,0.6) inset, 0 12px 24px -16px rgba(30,20,80,0.18);
-}
-
-*, *::before, *::after{ box-sizing: border-box; }
-html{ scroll-behavior: smooth; }
-body{
-  margin: 0;
-  background: radial-gradient(1200px 600px at 15% -10%, rgba(182,255,63,0.10), transparent 60%),
-              radial-gradient(1000px 500px at 100% 0%, rgba(255,194,75,0.10), transparent 55%),
-              var(--bg);
-  color: var(--text);
-  font-family: var(--font-body);
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
-}
-img{ max-width: 100%; display: block; }
-a{ color: inherit; text-decoration: none; }
-button{ font: inherit; color: inherit; }
-ul{ margin: 0; padding: 0; list-style: none; }
-h1,h2,h3,h4{ font-family: var(--font-display); margin: 0; line-height: 1.15; }
-p{ margin: 0; }
-
-@media (prefers-reduced-motion: reduce){
-  *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
-}
-
-:focus-visible{
-  outline: 2px solid var(--cyan);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-.container{ max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
-.visually-hidden{
-  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
-  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-}
-
-/* ---------- Header / Nav ---------- */
-.site-header{
-  position: sticky; top: 0; z-index: 100;
-  height: var(--header-h);
-  display: flex; align-items: center;
-  background: color-mix(in srgb, var(--bg) 78%, transparent);
-  backdrop-filter: blur(14px) saturate(140%);
-  border-bottom: 1px solid var(--surface-border);
-}
-.site-header .container{ display: flex; align-items: center; gap: 20px; width: 100%; }
-
-.brand{ display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.brand-mark{
-  font-family: var(--font-pixel);
-  font-size: 13px;
-  color: var(--bg);
-  background: linear-gradient(135deg, var(--gold), var(--gold-soft));
-  padding: 8px 9px 6px;
-  border-radius: 8px;
-  box-shadow: var(--shadow-glow-gold);
-  line-height: 1;
-}
-.brand-name{ font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: 0.2px; }
-
-.main-nav{ display: flex; align-items: center; gap: 4px; margin-left: 4px; }
-.main-nav a{
-  padding: 9px 13px; border-radius: 10px; font-size: 14.5px; font-weight: 500;
-  color: var(--text-muted); transition: color .18s ease, background .18s ease;
-  white-space: nowrap;
-}
-.main-nav a:hover{ color: var(--neon); background: var(--surface); }
-.main-nav a.active{ color: var(--text); background: var(--surface-2); }
-
-.header-actions{ display: flex; align-items: center; gap: 8px; margin-left: auto; }
-
-.search-wrap{ position: relative; display: flex; align-items: center; }
-.search-input{
-  width: 220px; max-width: 40vw;
-  background: var(--surface); border: 1px solid var(--surface-border);
-  color: var(--text); border-radius: 10px;
-  padding: 9px 12px 9px 34px; font-size: 14px;
-  transition: width .2s ease, border-color .2s ease;
-}
-.search-input:focus{ border-color: var(--neon); width: 260px; }
-.search-icon{ position: absolute; left: 11px; width: 16px; height: 16px; color: var(--text-faint); pointer-events: none; }
-
-.icon-btn{
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 38px; height: 38px; border-radius: 10px;
-  background: var(--surface); border: 1px solid var(--surface-border);
-  cursor: pointer; transition: background .18s ease, transform .12s ease, border-color .18s ease;
-}
-.icon-btn:hover{ background: var(--surface-2); border-color: var(--neon); }
-.icon-btn:active{ transform: scale(0.94); }
-.icon-btn svg{ width: 18px; height: 18px; }
-
-.nav-toggle{ display: none; }
-
-/* ---------- Buttons ---------- */
-.btn{
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 12px 22px; border-radius: 12px; font-weight: 600; font-size: 15px;
-  cursor: pointer; border: 1px solid transparent; transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
-  white-space: nowrap;
-}
-.btn:active{ transform: translateY(1px) scale(0.99); }
-.btn-primary{
-  background: linear-gradient(135deg, var(--gold), #ffab2e);
-  color: #201200; box-shadow: var(--shadow-glow-gold);
-}
-.btn-primary:hover{ box-shadow: 0 0 0 1px rgba(255,194,75,0.4), 0 12px 34px -8px rgba(255,194,75,0.55); }
-.btn-secondary{
-  background: var(--surface-2); color: var(--text); border-color: var(--surface-border);
-}
-.btn-secondary:hover{ border-color: var(--neon); }
-.btn-ghost{ background: transparent; color: var(--text-muted); border-color: var(--surface-border); }
-.btn-ghost:hover{ color: var(--text); border-color: var(--neon); }
-.btn-sm{ padding: 8px 14px; font-size: 13.5px; border-radius: 10px; }
-.btn-block{ width: 100%; }
-.btn[disabled]{ opacity: 0.45; cursor: not-allowed; }
-
-/* ---------- Hero ---------- */
-.hero{ padding: 56px 0 40px; position: relative; overflow: hidden; }
-.hero::before{
-  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background-image: repeating-linear-gradient(115deg, rgba(182,255,63,0.035) 0 2px, transparent 2px 90px);
-}
-.hero .container{ display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; }
-.hero-eyebrow{
-  display: inline-flex; align-items: center; gap: 8px;
-  color: var(--gold); font-size: 13.5px; font-weight: 600; margin-bottom: 18px;
-}
-.hero-eyebrow .dot{ width: 7px; height: 7px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px var(--gold); }
-.hero h1{
-  font-size: clamp(38px, 5.4vw, 62px); font-weight: 700; letter-spacing: -0.5px;
-  margin-bottom: 18px;
-}
-.hero h1 .accent{ color: var(--gold); }
-.hero-tagline{ font-size: 19px; color: var(--text-muted); max-width: 46ch; margin-bottom: 28px; }
-.hero-cta{ display: flex; gap: 12px; flex-wrap: wrap; }
-.hero-stats{ display: flex; gap: 28px; margin-top: 36px; flex-wrap: wrap; }
-.hero-stat b{ display: block; font-family: var(--font-display); font-size: 22px; }
-.hero-stat span{ font-size: 13px; color: var(--text-faint); }
-
-/* Arcade "screen" visual: animated falling-block grid, grounded in Tetris */
-.hero-screen{
-  position: relative; aspect-ratio: 4/3; border-radius: 22px; overflow: hidden;
-  background: linear-gradient(180deg, #0a0d1c, #05070f);
-  border: 1px solid var(--surface-border);
-  box-shadow: 0 0 0 8px var(--surface), 0 0 0 9px var(--surface-border), 0 30px 60px -20px rgba(0,0,0,0.7);
-}
-.hero-screen::before{
-  content: ""; position: absolute; inset: 0;
-  background: repeating-linear-gradient(0deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 26px),
-              repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 26px);
-}
-.hero-block{
-  position: absolute; width: 26px; height: 26px; border-radius: 5px;
-  animation: fall linear infinite;
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.15);
-}
-@keyframes fall{
-  0%{ transform: translateY(-40px); opacity: 0; }
-  8%{ opacity: 1; }
-  100%{ transform: translateY(340px); opacity: 0; }
-}
-.hero-screen .glow-bar{
-  position: absolute; bottom: 0; left: 0; right: 0; height: 40%;
-  background: linear-gradient(180deg, transparent, rgba(255,194,75,0.12));
-}
-
-/* ---------- Section headers ---------- */
-.section{ padding: 48px 0; }
-.section-head{
-  display: flex; align-items: flex-end; justify-content: space-between; gap: 20px;
-  margin-bottom: 24px; flex-wrap: wrap;
-}
-.section-head h2{ font-size: 26px; font-weight: 700; }
-.section-head p{ color: var(--text-muted); font-size: 14.5px; margin-top: 4px; }
-
-/* ---------- Category chips ---------- */
-.chip-row{ display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
-.chip{
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 9px 16px; border-radius: 100px; font-size: 14px; font-weight: 500;
-  background: var(--surface); border: 1px solid var(--surface-border); color: var(--text-muted);
-  cursor: pointer; transition: all .16s ease;
-}
-.chip:hover{ color: var(--text); border-color: var(--neon); }
-.chip.active{
-  background: linear-gradient(135deg, rgba(182,255,63,0.2), rgba(182,255,63,0.06));
-  border-color: var(--neon); color: var(--text);
-}
-
-/* ---------- Game grid & cards ---------- */
-.game-grid{
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;
-}
-.game-card{
-  background: var(--surface); border: 1px solid var(--surface-border); border-radius: var(--radius-lg);
-  overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow-card);
-  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
-  position: relative;
-}
-.game-card::before{
-  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; z-index: 3;
-  background: linear-gradient(90deg, var(--neon), var(--gold));
-  transform: scaleX(0); transform-origin: left; transition: transform .25s ease;
-}
-.game-card:hover::before{ transform: scaleX(1); }
-.game-card:hover{ transform: translateY(-6px); border-color: var(--neon); box-shadow: var(--shadow-glow-violet); }
-.game-thumb{
-  aspect-ratio: 16/10; position: relative; display: flex; align-items: center; justify-content: center;
-  font-size: 46px; overflow: hidden;
-}
-.game-thumb .thumb-icon{ position: relative; z-index: 1; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.5)); }
-.fav-btn{
-  position: absolute; top: 10px; right: 10px; z-index: 2;
-  width: 32px; height: 32px; border-radius: 50%;
-  background: rgba(10,12,24,0.55); border: 1px solid rgba(255,255,255,0.12);
-  display: flex; align-items: center; justify-content: center; cursor: pointer;
-  backdrop-filter: blur(4px); transition: background .16s ease, transform .12s ease;
-}
-.fav-btn:hover{ transform: scale(1.08); }
-.fav-btn svg{ width: 16px; height: 16px; stroke: #fff; fill: none; transition: fill .16s ease, stroke .16s ease; }
-.fav-btn.is-fav svg{ fill: var(--gold); stroke: var(--gold); }
-
-.game-info{ padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-.game-cat-tag{ font-size: 12px; font-weight: 700; color: var(--neon); text-transform: uppercase; letter-spacing: 0.07em; }
-.game-info h3{ font-size: 17px; font-weight: 600; }
-.game-info p{ font-size: 13.5px; color: var(--text-muted); flex: 1; }
-.game-card-foot{ display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 10px; }
-.game-play-btn{
-  padding: 8px 16px; border-radius: 10px; font-size: 13.5px; font-weight: 600;
-  background: var(--surface-2); border: 1px solid var(--surface-border);
-  transition: all .16s ease; display: inline-flex; align-items: center; gap: 6px;
-}
-.game-card:hover .game-play-btn{ background: linear-gradient(135deg, var(--gold), #ffab2e); color: #201200; border-color: transparent; }
-.high-score-tag{ font-size: 11.5px; color: var(--text-faint); font-family: var(--font-pixel); }
-
-.empty-state{
-  text-align: center; padding: 60px 20px; color: var(--text-muted);
-  border: 1px dashed var(--surface-border); border-radius: var(--radius-lg);
-}
-.empty-state h3{ font-size: 18px; margin-bottom: 6px; color: var(--text); }
-
-/* ---------- Footer ---------- */
-.site-footer{ border-top: 1px solid var(--surface-border); margin-top: 60px; padding: 40px 0 30px; }
-.footer-grid{ display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 30px; }
-.footer-col h4{ font-size: 13.5px; margin-bottom: 12px; color: var(--text); }
-.footer-col p{ color: var(--text-muted); font-size: 13.5px; max-width: 32ch; }
-.footer-col ul li{ margin-bottom: 8px; }
-.footer-col ul a{ font-size: 13.5px; color: var(--text-muted); transition: color .16s ease; }
-.footer-col ul a:hover{ color: var(--gold); }
-.footer-bottom{
-  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
-  padding-top: 20px; border-top: 1px solid var(--surface-border); font-size: 12.5px; color: var(--text-faint);
-}
-
-/* =========================================================
-   GAME PAGE
-   ========================================================= */
-.game-page-head{ padding: 28px 0 8px; }
-.breadcrumb{ font-size: 13px; color: var(--text-faint); margin-bottom: 14px; display: flex; gap: 6px; align-items: center; }
-.breadcrumb a{ color: var(--text-muted); }
-.breadcrumb a:hover{ color: var(--gold); }
-.game-title-row{ display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-.game-title-row h1{ font-size: 30px; display: flex; align-items: center; gap: 12px; }
-.game-title-row .title-icon{ font-size: 32px; }
-.game-title-tags{ display: flex; gap: 8px; margin-top: 8px; }
-.tag-pill{
-  font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 100px;
-  background: var(--surface-2); border: 1px solid var(--surface-border); color: var(--text-muted);
-}
-
-.game-layout{ display: grid; grid-template-columns: 1fr 300px; gap: 26px; padding: 24px 0 56px; align-items: start; }
-
-.game-stage{
-  background: var(--surface); border: 1px solid var(--surface-border); border-radius: var(--radius-lg);
-  padding: 20px; box-shadow: var(--shadow-card);
-}
-.stage-topbar{ display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-.score-cluster{ display: flex; gap: 18px; flex-wrap: wrap; }
-.score-box{ display: flex; flex-direction: column; gap: 2px; }
-.score-box .label{ font-size: 11px; color: var(--text-faint); font-weight: 600; }
-.score-box .value{ font-family: var(--font-pixel); font-size: 16px; color: var(--gold); }
-.stage-controls{ display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-
-.game-canvas-wrap{
-  display: flex; align-items: center; justify-content: center;
-  background: #05070f; border-radius: var(--radius-md); border: 1px solid var(--surface-border);
-  padding: 16px; min-height: 320px; position: relative; overflow: hidden;
-  touch-action: none;
-}
-.game-canvas-wrap canvas{ max-width: 100%; height: auto; border-radius: 6px; }
-
-.overlay-msg{
-  position: absolute; inset: 0; display: none; flex-direction: column; gap: 14px;
-  align-items: center; justify-content: center; text-align: center;
-  background: rgba(5,7,15,0.86); backdrop-filter: blur(3px); z-index: 5; padding: 20px;
-}
-.overlay-msg.show{ display: flex; }
-.overlay-msg h3{ font-size: 22px; }
-.overlay-msg p{ color: var(--text-muted); font-size: 14px; max-width: 34ch; }
-
-.touch-controls{ display: none; margin-top: 16px; }
-.touch-controls.active{ display: grid; }
-.dpad{
-  display: grid; grid-template-columns: 56px 56px 56px; grid-template-rows: 56px 56px 56px;
-  gap: 6px; justify-content: center; margin: 0 auto;
-}
-.dpad button{
-  background: var(--surface-2); border: 1px solid var(--surface-border); border-radius: 12px;
-  display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--text);
-}
-.dpad button:active{ background: var(--neon); color: #0a0c12; }
-.dpad .up{ grid-column: 2; grid-row: 1; }
-.dpad .left{ grid-column: 1; grid-row: 2; }
-.dpad .rotate{ grid-column: 2; grid-row: 2; }
-.dpad .right{ grid-column: 3; grid-row: 2; }
-.dpad .down{ grid-column: 2; grid-row: 3; }
-.touch-row{ display: flex; justify-content: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-
-.side-panel{ display: flex; flex-direction: column; gap: 18px; }
-.panel-card{
-  background: var(--surface); border: 1px solid var(--surface-border); border-radius: var(--radius-md);
-  padding: 18px; box-shadow: var(--shadow-card);
-}
-.panel-card h3{ font-size: 14.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-.field{ margin-bottom: 14px; }
-.field:last-child{ margin-bottom: 0; }
-.field label{ display: block; font-size: 12.5px; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
-.select{
-  width: 100%; padding: 9px 12px; border-radius: 10px; background: var(--surface-2);
-  border: 1px solid var(--surface-border); color: var(--text); font-size: 14px;
-}
-.seg-group{ display: flex; background: var(--surface-2); border: 1px solid var(--surface-border); border-radius: 10px; padding: 3px; gap: 3px; }
-.seg-group button{
-  flex: 1; padding: 7px 8px; border-radius: 8px; font-size: 12.5px; font-weight: 600; background: transparent; color: var(--text-muted);
-}
-.seg-group button.active{ background: var(--neon); color: #0a0c12; }
-
-.kbd-list{ display: flex; flex-direction: column; gap: 8px; }
-.kbd-row{ display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--text-muted); }
-.kbd{
-  font-family: var(--font-pixel); font-size: 10.5px; background: var(--surface-2);
-  border: 1px solid var(--surface-border); border-bottom-width: 2px; padding: 5px 7px; border-radius: 6px; color: var(--text);
-}
-.instructions p{ font-size: 13.5px; color: var(--text-muted); margin-bottom: 8px; }
-.instructions p:last-child{ margin-bottom: 0; }
-
-.toggle-row{ display: flex; align-items: center; justify-content: space-between; }
-.switch{ position: relative; width: 42px; height: 24px; }
-.switch input{ opacity: 0; width: 0; height: 0; }
-.switch .track{
-  position: absolute; inset: 0; background: var(--surface-2); border: 1px solid var(--surface-border);
-  border-radius: 100px; transition: background .2s ease; cursor: pointer;
-}
-.switch .track::before{
-  content: ""; position: absolute; width: 18px; height: 18px; left: 2px; top: 2px;
-  background: var(--text-muted); border-radius: 50%; transition: transform .2s ease, background .2s ease;
-}
-.switch input:checked + .track{ background: var(--neon); border-color: var(--neon); }
-.switch input:checked + .track::before{ transform: translateX(18px); background: #fff; }
-
-/* Minesweeper / Tic-Tac-Toe / Connect4 / Checkers / Chess / Block puzzle grids */
-.grid-board{ display: grid; gap: 4px; }
-.cell{
-  display: flex; align-items: center; justify-content: center; user-select: none;
-  background: var(--surface-2); border: 1px solid var(--surface-border); border-radius: 6px;
-  font-weight: 700; cursor: pointer; transition: background .12s ease, transform .1s ease;
-}
-.cell:hover{ background: #262e50; }
-
-.ttt-board{ grid-template-columns: repeat(3, 84px); grid-template-rows: repeat(3, 84px); }
-.ttt-board .cell{ font-size: 40px; font-family: var(--font-display); border-radius: 10px; }
-.ttt-board .cell.x{ color: var(--cyan); }
-.ttt-board .cell.o{ color: var(--gold); }
-.ttt-board .cell.win{ background: rgba(74,222,128,0.18); border-color: var(--green); }
-
-.c4-board{ background: #12193a; padding: 10px; border-radius: 14px; display: inline-grid; gap: 8px; }
-.c4-cell{
-  width: 46px; height: 46px; border-radius: 50%; background: #05070f;
-  border: 1px solid var(--surface-border); cursor: pointer; position: relative;
-}
-.c4-cell.p1::after, .c4-cell.p2::after{
-  content: ""; position: absolute; inset: 3px; border-radius: 50%;
-}
-.c4-cell.p1::after{ background: radial-gradient(circle at 32% 28%, #ffe6a8, var(--gold)); }
-.c4-cell.p2::after{ background: radial-gradient(circle at 32% 28%, #b9ffe9, var(--cyan)); }
-
-.ms-board{ display: inline-grid; gap: 2px; background: #05070f; padding: 8px; border-radius: 10px; }
-.ms-cell{
-  width: 28px; height: 28px; font-size: 13px; border-radius: 4px;
-  background: var(--surface-2); border: 1px solid var(--surface-border);
-  display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 700;
-}
-.ms-cell.open{ background: #0e1224; cursor: default; }
-.ms-cell.mine{ background: var(--red); }
-.ms-cell.flag{ color: var(--gold); }
-
-.chess-board{ display: inline-grid; grid-template-columns: repeat(8, 46px); grid-template-rows: repeat(8, 46px); border-radius: 10px; overflow: hidden; border: 1px solid var(--surface-border); }
-.chess-cell{ display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; position: relative; }
-.chess-cell.light{ background: #2b3260; }
-.chess-cell.dark{ background: #171c38; }
-.chess-cell.selected{ box-shadow: inset 0 0 0 3px var(--gold); }
-.chess-cell.move-hint::after{ content:""; width: 12px; height: 12px; border-radius: 50%; background: rgba(255,194,75,0.55); position: absolute; }
-.chess-cell.capture-hint{ box-shadow: inset 0 0 0 3px rgba(251,93,93,0.7); }
-.chess-cell.last-move{ background-color: rgba(139,107,255,0.35) !important; }
-.chess-cell.in-check{ background-color: rgba(251,93,93,0.5) !important; }
-
-.checkers-board{ display: inline-grid; grid-template-columns: repeat(8, 46px); grid-template-rows: repeat(8, 46px); border-radius: 10px; overflow: hidden; border: 1px solid var(--surface-border); }
-.checkers-cell{ display: flex; align-items: center; justify-content: center; cursor: default; position: relative; }
-.checkers-cell.light{ background: #2b3260; }
-.checkers-cell.dark{ background: #171c38; cursor: pointer; }
-.checkers-cell.selected{ box-shadow: inset 0 0 0 3px var(--gold); }
-.checkers-cell.move-hint::after{ content:""; width: 12px; height: 12px; border-radius: 50%; background: rgba(74,222,128,0.6); position: absolute; }
-.checker-piece{ width: 34px; height: 34px; border-radius: 50%; }
-.checker-piece.p1{ background: radial-gradient(circle at 32% 28%, #ffe6a8, var(--gold)); }
-.checker-piece.p2{ background: radial-gradient(circle at 32% 28%, #dfe4ff, #6b74b8); }
-.checker-piece.king::after{ content:"★"; display:flex; align-items:center; justify-content:center; height:100%; color:#3a2a00; font-size: 15px; }
-
-.bp-board{ display: inline-grid; gap: 3px; background: #05070f; padding: 8px; border-radius: 10px; }
-.bp-cell{ width: 34px; height: 34px; border-radius: 5px; background: var(--surface-2); border: 1px solid var(--surface-border); }
-.bp-cell.filled{ background: linear-gradient(135deg, var(--violet), #6b4bff); border-color: transparent; }
-.bp-tray{ display: flex; gap: 14px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
-.bp-piece{ display: inline-grid; gap: 2px; padding: 6px; border-radius: 8px; cursor: grab; background: var(--surface-2); border: 1px solid var(--surface-border); }
-.bp-piece.dragging{ opacity: 0.5; }
-.bp-piece .pc{ width: 16px; height: 16px; border-radius: 3px; background: transparent; }
-.bp-piece .pc.on{ background: linear-gradient(135deg, var(--gold), #ffab2e); }
-.bp-piece.selected{ border-color: var(--gold); box-shadow: 0 0 0 2px rgba(255,194,75,0.3); }
-
-.more-games{ padding: 8px 0 60px; }
-
-/* ---------- Responsive ---------- */
-@media (max-width: 980px){
-  .hero .container{ grid-template-columns: 1fr; }
-  .hero-screen{ order: -1; max-width: 420px; margin: 0 auto; }
-  .footer-grid{ grid-template-columns: 1fr 1fr; }
-  .game-layout{ grid-template-columns: 1fr; }
-}
-
-@media (max-width: 760px){
-  .main-nav{ display: none; }
-  .nav-toggle{ display: inline-flex; }
-  .search-input{ width: 150px; }
-  .game-grid{ grid-template-columns: 1fr; }
-  .footer-grid{ grid-template-columns: 1fr 1fr; gap: 22px; }
-  .hero{ padding: 34px 0 24px; }
-  .chess-board, .checkers-board{ grid-template-columns: repeat(8, 11.5vw); grid-template-rows: repeat(8, 11.5vw); }
-  .chess-cell{ font-size: 6.5vw; }
-}
-
-.mobile-menu{
-  display: none; position: fixed; inset: var(--header-h) 0 0 0; z-index: 90;
-  background: var(--bg); padding: 20px; overflow-y: auto;
-}
-.mobile-menu.open{ display: block; }
-.mobile-menu a{ display: block; padding: 14px 6px; font-size: 17px; border-bottom: 1px solid var(--surface-border); }
-
-.skip-link{
-  position: absolute; left: -999px; top: 0; background: var(--gold); color: #201200;
-  padding: 10px 16px; border-radius: 0 0 10px 0; z-index: 200; font-weight: 600;
-}
-.skip-link:focus{ left: 0; }
-
-</style>
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 <a href="#main" class="skip-link">Skip to content</a>
@@ -575,12 +52,14 @@ p{ margin: 0; }
   <a href="#about">About</a>
 </div>
 
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="tickerTrack"></div></div>
+
 <main id="main">
 
   <section class="hero">
     <div class="container">
       <div class="hero-copy">
-        <span class="hero-eyebrow"><span class="dot"></span>8 games · always free · no install</span>
+        <span class="hero-eyebrow"><span class="dot"></span><span id="eyebrowCount">8</span> games · always free · no install</span>
         <h1>Play. Relax.<br><span class="accent">Have Fun.</span></h1>
         <p class="hero-tagline">Enjoy timeless classics and addictive puzzle games, right in your browser.</p>
         <div class="hero-cta">
@@ -591,12 +70,13 @@ p{ margin: 0; }
           <a href="#categories" class="btn btn-secondary">Browse Categories</a>
         </div>
         <div class="hero-stats">
-          <div class="hero-stat"><b>8</b><span>games to play</span></div>
+          <div class="hero-stat"><b id="statGameCount">8</b><span>games to play</span></div>
           <div class="hero-stat"><b>0</b><span>downloads required</span></div>
           <div class="hero-stat"><b id="statFavCount">0</b><span>in your favorites</span></div>
         </div>
       </div>
       <div class="hero-screen" id="heroScreen" aria-hidden="true">
+        <div class="rec-badge"><span class="dot"></span>LIVE</div>
         <div class="glow-bar"></div>
       </div>
     </div>
@@ -702,15 +182,33 @@ p{ margin: 0; }
   </div>
 </footer><script>
 /* ---- js/games-data.js ---- */
-/* Game metadata — single source of truth for cards, filters, and game pages. */
+/* Game metadata — single source of truth for cards, filters, and game pages.
+   Icons are hand-built inline SVG (duotone, brand palette) instead of emoji,
+   so thumbnails render identically everywhere and read as a matched set. */
+
+const ICONS = {
+  tetris: `<svg viewBox="0 0 64 64" fill="none"><rect x="7" y="30" width="16" height="16" rx="3.5" fill="#46dbe8"/><rect x="23" y="30" width="16" height="16" rx="3.5" fill="#2bb8c4"/><rect x="23" y="14" width="16" height="16" rx="3.5" fill="#ffc24b"/><rect x="39" y="14" width="16" height="16" rx="3.5" fill="#e0a53c"/></svg>`,
+  tictactoe: `<svg viewBox="0 0 64 64" fill="none"><g stroke="#7d84a3" stroke-width="2.5" stroke-linecap="round"><line x1="23" y1="9" x2="23" y2="55"/><line x1="41" y1="9" x2="41" y2="55"/><line x1="9" y1="23" x2="55" y2="23"/><line x1="9" y1="41" x2="55" y2="41"/></g><g stroke="#46dbe8" stroke-width="4.5" stroke-linecap="round"><line x1="11" y1="11" x2="19" y2="19"/><line x1="19" y1="11" x2="11" y2="19"/></g><circle cx="49" cy="15" r="6.5" fill="none" stroke="#ffc24b" stroke-width="4.2"/><g stroke="#46dbe8" stroke-width="4.5" stroke-linecap="round"><line x1="45" y1="45" x2="53" y2="53"/><line x1="53" y1="45" x2="45" y2="53"/></g></svg>`,
+  snake: `<svg viewBox="0 0 64 64" fill="none"><path d="M9 47 h10 v-11 h10 v-11 h10 v-11 h11" stroke="#4ade80" stroke-width="9.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="14" r="6" fill="#c8ffde"/><circle cx="52.5" cy="12" r="1.3" fill="#0a0c12"/><circle cx="14" cy="51" r="3.2" fill="#ffc24b"/></svg>`,
+  blockpuzzle: `<svg viewBox="0 0 64 64" fill="none"><rect x="7" y="35" width="15" height="15" rx="3.5" fill="#8b6bff"/><rect x="23" y="35" width="15" height="15" rx="3.5" fill="#8b6bff"/><rect x="23" y="19" width="15" height="15" rx="3.5" fill="#a893ff"/><rect x="41" y="11" width="15" height="15" rx="3.5" fill="#46dbe8"/><rect x="41" y="27" width="15" height="15" rx="3.5" fill="#2bb8c4"/></svg>`,
+  chess: `<svg viewBox="0 0 64 64" fill="none"><g fill="#eef1f6"><rect x="16" y="9" width="6" height="8"/><rect x="29" y="9" width="6" height="8"/><rect x="42" y="9" width="6" height="8"/><rect x="16" y="9" width="32" height="5.5"/><path d="M19 17 L45 17 L39 33 L25 33 Z"/><rect x="23" y="33" width="18" height="8"/><path d="M17 50 L47 50 L42 42 L22 42 Z"/><rect x="12" y="50" width="40" height="6" rx="2"/></g></svg>`,
+  checkers: `<svg viewBox="0 0 64 64" fill="none"><ellipse cx="32" cy="46" rx="19" ry="6.5" fill="#0a0c12" opacity="0.4"/><circle cx="32" cy="35" r="18" fill="#ffc24b"/><circle cx="32" cy="35" r="18" fill="none" stroke="#c98f1c" stroke-width="2.2"/><circle cx="32" cy="35" r="11.5" fill="none" stroke="#c98f1c" stroke-width="1.6"/><path d="M32 26 l2.6 6.3 6.7.6-5.1 4.5 1.6 6.6-5.8-3.7-5.8 3.7 1.6-6.6-5.1-4.5 6.7-.6z" fill="#171c38"/></svg>`,
+  minesweeper: `<svg viewBox="0 0 64 64" fill="none"><circle cx="30" cy="39" r="17" fill="#171c38" stroke="#fb5d5d" stroke-width="2.2"/><rect x="27" y="13" width="6" height="11" rx="2" fill="#9aa1c4"/><circle cx="30" cy="11" r="4.2" fill="#fb5d5d"/><g stroke="#fb5d5d" stroke-width="2.4" stroke-linecap="round"><line x1="4" y1="39" x2="11" y2="39"/><line x1="49" y1="39" x2="56" y2="39"/><line x1="30" y1="58" x2="30" y2="65"/></g><circle cx="24" cy="33" r="3.2" fill="#eef1f6" opacity="0.55"/></svg>`,
+  connect4: `<svg viewBox="0 0 64 64" fill="none"><rect x="5" y="9" width="54" height="46" rx="7" fill="#12193a"/><circle cx="19" cy="23" r="7.2" fill="#ffc24b"/><circle cx="36" cy="23" r="7.2" fill="#0a0c12"/><circle cx="19" cy="41" r="7.2" fill="#0a0c12"/><circle cx="36" cy="41" r="7.2" fill="#46dbe8"/><circle cx="53" cy="23" r="7.2" fill="#0a0c12"/><circle cx="53" cy="41" r="7.2" fill="#0a0c12"/></svg>`,
+  brickbreaker: `<svg viewBox="0 0 64 64" fill="none"><rect x="9" y="11" width="13" height="7.5" rx="2" fill="#ff6b45"/><rect x="24" y="11" width="13" height="7.5" rx="2" fill="#ff8a63"/><rect x="39" y="11" width="13" height="7.5" rx="2" fill="#ff6b45"/><rect x="9" y="20.5" width="13" height="7.5" rx="2" fill="#ffc24b"/><rect x="24" y="20.5" width="13" height="7.5" rx="2" fill="#ff8a63"/><rect x="39" y="20.5" width="13" height="7.5" rx="2" fill="#ffc24b"/><circle cx="32" cy="42" r="5" fill="#eef1f6"/><rect x="19" y="52" width="26" height="6.5" rx="3.2" fill="#46dbe8"/></svg>`,
+  galaxydefender: `<svg viewBox="0 0 64 64" fill="none"><g fill="#ff6b45"><rect x="8" y="11" width="9.5" height="9.5" rx="2.2"/><rect x="22" y="11" width="9.5" height="9.5" rx="2.2"/><rect x="36" y="11" width="9.5" height="9.5" rx="2.2"/><rect x="50" y="11" width="7" height="9.5" rx="2.2"/></g><g fill="#ff8a63"><rect x="15" y="24" width="9.5" height="9.5" rx="2.2"/><rect x="29" y="24" width="9.5" height="9.5" rx="2.2"/><rect x="43" y="24" width="9.5" height="9.5" rx="2.2"/></g><path d="M32 37 L45 55 L32 50.5 L19 55 Z" fill="#46dbe8"/><rect x="28.5" y="33" width="7" height="9" rx="2.4" fill="#46dbe8"/></svg>`,
+  paddleduel: `<svg viewBox="0 0 64 64" fill="none"><line x1="32" y1="7" x2="32" y2="57" stroke="#2a3150" stroke-width="3" stroke-dasharray="4.5 5.5"/><rect x="7" y="19" width="6.5" height="19" rx="3.2" fill="#46dbe8"/><rect x="50.5" y="27" width="6.5" height="19" rx="3.2" fill="#ff6b45"/><circle cx="35" cy="29" r="4.6" fill="#eef1f6"/></svg>`
+};
+
 const GAMES_DATA = [
   {
     id: "tetris",
     title: "Tetris",
-    icon: "🧱",
-    thumbGradient: "linear-gradient(135deg, #2b1d5c, #12193a)",
+    icon: ICONS.tetris,
+    thumbGradient: "linear-gradient(135deg, #23315e, #10152a)",
     category: "arcade",
     categoryLabel: "Arcade",
+    players: "1 Player",
     description: "Stack falling blocks, clear lines, and race the speed curve.",
     longDescription: "The classic block-stacking arcade game. Rotate and drop tetrominoes to clear full rows before the stack reaches the top.",
     hasDifficulty: true,
@@ -739,10 +237,11 @@ const GAMES_DATA = [
   {
     id: "tictactoe",
     title: "Tic-Tac-Toe",
-    icon: "✖️",
-    thumbGradient: "linear-gradient(135deg, #163a3c, #12193a)",
+    icon: ICONS.tictactoe,
+    thumbGradient: "linear-gradient(135deg, #1c3d40, #10152a)",
     category: "classic",
     categoryLabel: "Classic",
+    players: "1–2 Players",
     description: "The pocket-sized original. Play a friend or challenge the CPU.",
     longDescription: "Take turns marking a 3×3 grid. Line up three in a row — across, down, or diagonally — before your opponent does.",
     hasDifficulty: true,
@@ -765,10 +264,11 @@ const GAMES_DATA = [
   {
     id: "snake",
     title: "Snake",
-    icon: "🐍",
-    thumbGradient: "linear-gradient(135deg, #123a24, #12193a)",
+    icon: ICONS.snake,
+    thumbGradient: "linear-gradient(135deg, #144229, #10152a)",
     category: "arcade",
     categoryLabel: "Arcade",
+    players: "1 Player",
     description: "Guide the snake, eat, and grow — don't hit the walls or yourself.",
     longDescription: "Steer a constantly-moving snake around the board to eat food and grow longer, without colliding with the walls or your own tail.",
     hasDifficulty: true,
@@ -791,10 +291,11 @@ const GAMES_DATA = [
   {
     id: "blockpuzzle",
     title: "Block Puzzle",
-    icon: "🟪",
-    thumbGradient: "linear-gradient(135deg, #2a1d55, #12193a)",
+    icon: ICONS.blockpuzzle,
+    thumbGradient: "linear-gradient(135deg, #2e2263, #10152a)",
     category: "puzzle",
     categoryLabel: "Puzzle",
+    players: "1 Player",
     description: "Drag pieces onto the grid to clear full rows and columns.",
     longDescription: "A calm, no-timer puzzle. Drag the offered pieces onto the 8×8 board — filling a full row or column clears it and scores points.",
     hasDifficulty: false,
@@ -810,18 +311,27 @@ const GAMES_DATA = [
   {
     id: "chess",
     title: "Chess",
-    icon: "♞",
-    thumbGradient: "linear-gradient(135deg, #1c2452, #12193a)",
+    icon: ICONS.chess,
+    thumbGradient: "linear-gradient(135deg, #212c5c, #10152a)",
     category: "strategy",
     categoryLabel: "Strategy",
-    description: "Full two-player chess with legal move checking and check detection.",
-    longDescription: "Play a complete local two-player game of chess on one device, with legal-move enforcement, check and checkmate detection, and captured-piece tracking.",
-    hasDifficulty: false,
+    players: "1–2 Players",
+    description: "Play a friend or challenge the CPU, with full check and checkmate detection.",
+    longDescription: "A complete game of chess with legal-move enforcement, check and checkmate detection, and captured-piece tracking — play locally against a friend or the built-in CPU.",
+    hasDifficulty: true,
+    difficultyLabel: "Opponent",
+    difficultyOptions: [
+      { value: "friend", label: "2 Player" },
+      { value: "easy", label: "CPU Easy" },
+      { value: "hard", label: "CPU Hard" }
+    ],
+    defaultDifficulty: "friend",
     scoreLabel: "Captures",
     keyboard: [["Click", "Select a piece, then a highlighted square to move"]],
     touch: true,
     instructions: [
       "White moves first. Tap a piece to see its legal moves highlighted, then tap a highlighted square to move.",
+      "Against the CPU, you always play White — the computer replies automatically as Black.",
       "Check is shown with a red glow on the king in danger. Checkmate ends the game.",
       "This build covers standard piece movement and check/checkmate — castling and en passant are not yet included."
     ]
@@ -829,10 +339,11 @@ const GAMES_DATA = [
   {
     id: "checkers",
     title: "Checkers",
-    icon: "⛃",
-    thumbGradient: "linear-gradient(135deg, #33210f, #12193a)",
+    icon: ICONS.checkers,
+    thumbGradient: "linear-gradient(135deg, #3d2a12, #10152a)",
     category: "strategy",
     categoryLabel: "Strategy",
+    players: "2 Players",
     description: "Classic draughts with forced captures and kinging.",
     longDescription: "Two-player checkers on one device. Capture diagonally over an opponent's piece, and reach the far row to crown a king.",
     hasDifficulty: false,
@@ -848,10 +359,11 @@ const GAMES_DATA = [
   {
     id: "minesweeper",
     title: "Minesweeper",
-    icon: "💣",
-    thumbGradient: "linear-gradient(135deg, #3a1414, #12193a)",
+    icon: ICONS.minesweeper,
+    thumbGradient: "linear-gradient(135deg, #451c1c, #10152a)",
     category: "brain",
     categoryLabel: "Brain",
+    players: "1 Player",
     description: "Clear the field using number clues — don't detonate a mine.",
     longDescription: "Reveal every safe tile on the grid. Numbers tell you how many mines are hiding in the neighboring cells — flag the ones you suspect.",
     hasDifficulty: true,
@@ -874,20 +386,113 @@ const GAMES_DATA = [
   {
     id: "connect4",
     title: "Connect Four",
-    icon: "🔴",
-    thumbGradient: "linear-gradient(135deg, #123048, #12193a)",
+    icon: ICONS.connect4,
+    thumbGradient: "linear-gradient(135deg, #163656, #10152a)",
     category: "multiplayer",
     categoryLabel: "Multiplayer",
-    description: "Drop discs and connect four in a row before your opponent.",
-    longDescription: "Take turns dropping discs into a 7×6 grid. Gravity pulls each disc to the lowest open slot — connect four in any direction to win.",
-    hasDifficulty: false,
+    players: "1–2 Players",
+    description: "Drop discs and connect four in a row — play a friend or the CPU.",
+    longDescription: "Take turns dropping discs into a 7×6 grid. Gravity pulls each disc to the lowest open slot — connect four in any direction to win, against a friend or the built-in CPU.",
+    hasDifficulty: true,
+    difficultyLabel: "Opponent",
+    difficultyOptions: [
+      { value: "friend", label: "2 Player" },
+      { value: "easy", label: "CPU Easy" },
+      { value: "hard", label: "CPU Hard" }
+    ],
+    defaultDifficulty: "friend",
     scoreLabel: "Wins",
     keyboard: [["1–7", "Drop into matching column"], ["R", "Restart"]],
     touch: true,
     instructions: [
       "Players alternate turns dropping a disc into any column.",
+      "Against the CPU, you always play the gold discs — the computer replies automatically.",
       "Connect four discs of your color in a row — horizontally, vertically, or diagonally — to win.",
       "The game ends in a draw if the board fills with no winner."
+    ]
+  },
+  {
+    id: "brickbreaker",
+    title: "Brick Breaker",
+    icon: ICONS.brickbreaker,
+    thumbGradient: "linear-gradient(135deg, #5a2a1c, #10152a)",
+    category: "arcade",
+    categoryLabel: "Arcade",
+    players: "1 Player",
+    isNew: true,
+    description: "Bounce the ball, smash every brick, don't let it fall.",
+    longDescription: "Steer the paddle to keep the ball alive and clear every brick from the field. Clear the whole wall to advance to a faster, tougher layout.",
+    hasDifficulty: true,
+    difficultyLabel: "Ball speed",
+    difficultyOptions: [
+      { value: "slow", label: "Slow" },
+      { value: "normal", label: "Normal" },
+      { value: "fast", label: "Fast" }
+    ],
+    defaultDifficulty: "normal",
+    scoreLabel: "Score",
+    keyboard: [["← / →", "Move paddle"], ["Space", "Launch ball"], ["P", "Pause"]],
+    touch: true,
+    instructions: [
+      "Drag anywhere on the board (or use the arrow keys) to slide the paddle left and right.",
+      "Tap or press Space to launch the ball, then keep it alive by bouncing it off the paddle.",
+      "Clear every brick to advance. You have 3 balls — lose them all and it's game over."
+    ]
+  },
+  {
+    id: "galaxydefender",
+    title: "Galaxy Defender",
+    icon: ICONS.galaxydefender,
+    thumbGradient: "linear-gradient(135deg, #1c3350, #10152a)",
+    category: "arcade",
+    categoryLabel: "Arcade",
+    players: "1 Player",
+    isNew: true,
+    description: "Hold the line against a descending alien squadron.",
+    longDescription: "Slide side to side and fire on a squadron of descending invaders before they reach the ground. Clear a wave and the next one comes in faster.",
+    hasDifficulty: true,
+    difficultyLabel: "Squadron speed",
+    difficultyOptions: [
+      { value: "slow", label: "Slow" },
+      { value: "normal", label: "Normal" },
+      { value: "fast", label: "Fast" }
+    ],
+    defaultDifficulty: "normal",
+    scoreLabel: "Score",
+    keyboard: [["← / →", "Move ship"], ["Space", "Fire"], ["P", "Pause"]],
+    touch: true,
+    instructions: [
+      "Use the on-screen arrows to move and the fire button to shoot — or the arrow keys and Space on desktop.",
+      "Clear an entire wave of invaders to advance to the next, faster one.",
+      "You have 3 lives. Getting hit — or letting the squadron reach the bottom — costs one."
+    ]
+  },
+  {
+    id: "paddleduel",
+    title: "Paddle Duel",
+    icon: ICONS.paddleduel,
+    thumbGradient: "linear-gradient(135deg, #163656, #10152a)",
+    category: "multiplayer",
+    categoryLabel: "Multiplayer",
+    players: "1–2 Players",
+    isNew: true,
+    description: "The original arcade classic — first to 7 points wins.",
+    longDescription: "Fast-paced two-paddle ball duel. Play a friend on the same keyboard, or take on the CPU. First to 7 points takes the match.",
+    hasDifficulty: true,
+    difficultyLabel: "Opponent",
+    difficultyOptions: [
+      { value: "friend", label: "2 Player" },
+      { value: "easy", label: "CPU Easy" },
+      { value: "hard", label: "CPU Hard" }
+    ],
+    defaultDifficulty: "easy",
+    scoreLabel: "Score",
+    keyboard: [["W / S", "Left paddle"], ["↑ / ↓", "Right paddle (2P only)"], ["P", "Pause"]],
+    touch: true,
+    instructions: [
+      "You always control the left paddle — drag on the left half of the board, or use W / S.",
+      "In 2 Player mode, the second player controls the right paddle with the ↑ / ↓ keys or the right half of the board.",
+      "The ball speeds up with every rally. First player to reach 7 points wins the match."
     ]
   }
 ];
@@ -978,6 +583,52 @@ const Store = (() => {
   };
 })();
 
+/* ---- js/utils.js ---- */
+/* Shared helper: compute a board cell size that fits the available width,
+   so grid-based games (chess, checkers, connect4, minesweeper, block puzzle)
+   never overflow on small screens. Writes the result to --cell on the board
+   element; the stylesheet's var(--cell, ...) rules do the rest. */
+window.CG = window.CG || {};
+
+CG.fitCell = function (container, cols, ideal, min) {
+  min = min || 20;
+  const wrap = (container && container.parentElement) || container || document.body;
+  const avail = Math.max(140, (wrap.clientWidth || 320) - 40);
+  let px = Math.floor(avail / cols);
+  px = Math.min(px, ideal);
+  px = Math.max(px, min);
+  return px;
+};
+
+CG.applyCell = function (boardEl, container, cols, ideal, min) {
+  const px = CG.fitCell(container, cols, ideal, min);
+  boardEl.style.setProperty("--cell", px + "px");
+  return px;
+};
+
+/* Card tilt + cursor-spotlight wiring, shared by the homepage grid and the
+   "More Games" strip on each game page. No-ops on touch-only devices. */
+CG.initCardTilt = function (scopeEl) {
+  if (!scopeEl) return;
+  const supportsHover = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  if (!supportsHover) return;
+  scopeEl.querySelectorAll(".game-card").forEach(card => {
+    card.addEventListener("pointermove", (e) => {
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+      card.style.setProperty("--mx", (px * 100) + "%");
+      card.style.setProperty("--my", (py * 100) + "%");
+      card.style.setProperty("--rx", ((px - 0.5) * 8).toFixed(2) + "deg");
+      card.style.setProperty("--ry", ((0.5 - py) * 8).toFixed(2) + "deg");
+    });
+    card.addEventListener("pointerleave", () => {
+      card.style.setProperty("--rx", "0deg");
+      card.style.setProperty("--ry", "0deg");
+    });
+  });
+};
+
 /* ---- js/main.js ---- */
 (() => {
   const gameGrid = document.getElementById("gameGrid");
@@ -1047,13 +698,17 @@ const Store = (() => {
     return `
     <article class="game-card" data-id="${game.id}">
       <div class="game-thumb" style="background:${game.thumbGradient}">
+        ${game.isNew ? '<span class="new-badge">New</span>' : ""}
         <button class="fav-btn ${isFav ? "is-fav" : ""}" data-fav="${game.id}" aria-pressed="${isFav}" aria-label="Toggle favorite for ${game.title}">
           <svg viewBox="0 0 24 24"><path d="M12 21s-6.7-4.35-9.3-8.1C.8 9.7 2 6 5.4 5.1 7.6 4.5 9.8 5.5 12 8c2.2-2.5 4.4-3.5 6.6-2.9C22 6 23.2 9.7 21.3 12.9 18.7 16.65 12 21 12 21z"/></svg>
         </button>
         <span class="thumb-icon">${game.icon}</span>
       </div>
       <div class="game-info">
-        <span class="game-cat-tag">${game.categoryLabel}</span>
+        <div class="game-info-top">
+          <span class="game-cat-tag">${game.categoryLabel}</span>
+          <span class="players-tag">${game.players || ""}</span>
+        </div>
         <h3>${game.title}</h3>
         <p>${game.description}</p>
         <div class="game-card-foot">
@@ -1063,6 +718,9 @@ const Store = (() => {
       </div>
     </article>`;
   }
+
+  /* ---------- card tilt + cursor-spotlight ---------- */
+  const initCardTilt = CG.initCardTilt;
 
   function bindFavButtons(container){
     container.querySelectorAll("[data-fav]").forEach(btn => {
@@ -1091,6 +749,7 @@ const Store = (() => {
       emptyState.hidden = true;
       gameGrid.innerHTML = list.map(cardHTML).join("");
       bindFavButtons(gameGrid);
+      initCardTilt(gameGrid);
     }
   }
 
@@ -1105,6 +764,7 @@ const Store = (() => {
       favEmptyState.hidden = true;
       favoritesGrid.innerHTML = favGames.map(cardHTML).join("");
       bindFavButtons(favoritesGrid);
+      initCardTilt(favoritesGrid);
     }
   }
 
@@ -1118,6 +778,7 @@ const Store = (() => {
     recentSection.hidden = false;
     recentGrid.innerHTML = recentGames.map(cardHTML).join("");
     bindFavButtons(recentGrid);
+    initCardTilt(recentGrid);
   }
 
   function renderAll(){
@@ -1142,6 +803,16 @@ const Store = (() => {
     window.location.href = `game.html?id=${pick.id}`;
   });
 
+  /* ---------- marquee ticker ---------- */
+  function buildTicker(){
+    const track = document.getElementById("tickerTrack");
+    if (!track) return;
+    const names = GAMES_DATA.map(g => g.title);
+    const loop = [...names, ...names]; // duplicated for seamless -50% scroll
+    track.innerHTML = loop.map(n => `<span>${n}</span>`).join("");
+  }
+  buildTicker();
+
   /* ---------- hero falling blocks (decorative, grounded in Tetris) ---------- */
   function buildHeroBlocks(){
     const screen = document.getElementById("heroScreen");
@@ -1161,6 +832,11 @@ const Store = (() => {
     }
   }
   buildHeroBlocks();
+
+  const eyebrowCount = document.getElementById("eyebrowCount");
+  const statGameCount = document.getElementById("statGameCount");
+  if (eyebrowCount) eyebrowCount.textContent = GAMES_DATA.length;
+  if (statGameCount) statGameCount.textContent = GAMES_DATA.length;
 
   renderChips();
   renderAll();
