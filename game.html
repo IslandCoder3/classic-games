@@ -45,6 +45,7 @@
   --shadow-glow-gold: 0 0 0 1px rgba(255,194,75,0.25), 0 8px 30px -8px rgba(255,194,75,0.35);
   --shadow-glow-violet: 0 0 0 1px rgba(182,255,63,0.3), 0 8px 30px -8px rgba(182,255,63,0.3);
   --shadow-card: 0 1px 0 rgba(255,255,255,0.03) inset, 0 12px 24px -16px rgba(0,0,0,0.6);
+  --surface-glass: rgba(20, 24, 34, 0.66);
 
   --font-display: 'Rajdhani', system-ui, sans-serif;
   --font-body: 'Rajdhani', system-ui, sans-serif;
@@ -64,21 +65,42 @@
   --text-muted: #55597d;
   --text-faint: #8b8eab;
   --shadow-card: 0 1px 0 rgba(255,255,255,0.6) inset, 0 12px 24px -16px rgba(30,20,80,0.18);
+  --surface-glass: rgba(255, 255, 255, 0.62);
 }
 
 *, *::before, *::after{ box-sizing: border-box; }
-html{ scroll-behavior: smooth; }
+html{ scroll-behavior: smooth; overflow-x: hidden; }
 body{
   margin: 0;
-  background: radial-gradient(1200px 600px at 15% -10%, rgba(182,255,63,0.10), transparent 60%),
-              radial-gradient(1000px 500px at 100% 0%, rgba(255,194,75,0.10), transparent 55%),
-              var(--bg);
+  overflow-x: hidden;
+  background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
 }
+
+/* Slow-drifting aurora wash behind everything — a quiet ambient backdrop.
+   Blurred, animated full-viewport layers are expensive to composite on phone
+   GPUs, so this is a desktop/tablet-only touch — switched off below 760px. */
+.aurora{ position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.aurora span{
+  position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.2;
+  animation: aurora-drift ease-in-out infinite;
+  will-change: transform;
+}
+.aurora span:nth-child(1){ width: 480px; height: 480px; background: var(--neon); top: -140px; left: -100px; animation-duration: 26s; }
+.aurora span:nth-child(2){ width: 420px; height: 420px; background: var(--gold); top: 6%; right: -140px; animation-duration: 32s; animation-delay: -8s; }
+.aurora span:nth-child(3){ width: 380px; height: 380px; background: var(--violet); bottom: -160px; left: 22%; animation-duration: 36s; animation-delay: -16s; }
+@keyframes aurora-drift{
+  0%, 100%{ transform: translate(0, 0) scale(1); }
+  33%{ transform: translate(60px, 40px) scale(1.12); }
+  66%{ transform: translate(-40px, 55px) scale(0.94); }
+}
+[data-theme="light"] .aurora span{ opacity: 0.12; }
+@media (max-width: 760px){ .aurora{ display: none; } }
+@media (prefers-reduced-motion: reduce){ .aurora span{ animation: none; } }
 img{ max-width: 100%; display: block; }
 a{ color: inherit; text-decoration: none; }
 button{ font: inherit; color: inherit; }
@@ -135,9 +157,9 @@ p{ margin: 0; }
 .main-nav a:hover{ color: var(--neon); background: var(--surface); }
 .main-nav a.active{ color: var(--text); background: var(--surface-2); }
 
-.header-actions{ display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.header-actions{ display: flex; align-items: center; gap: 8px; margin-left: auto; min-width: 0; }
 
-.search-wrap{ position: relative; display: flex; align-items: center; }
+.search-wrap{ position: relative; display: flex; align-items: center; min-width: 0; }
 .search-input{
   width: 220px; max-width: 40vw;
   background: var(--surface); border: 1px solid var(--surface-border);
@@ -189,7 +211,7 @@ p{ margin: 0; }
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background-image: repeating-linear-gradient(115deg, rgba(182,255,63,0.035) 0 2px, transparent 2px 90px);
 }
-.hero .container{ display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; }
+.hero .container{ display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 56px; align-items: center; }
 .hero-eyebrow{
   display: inline-flex; align-items: center; gap: 8px;
   color: var(--gold); font-size: 13.5px; font-weight: 600; margin-bottom: 18px;
@@ -379,7 +401,7 @@ p{ margin: 0; }
 
 /* ---------- Footer ---------- */
 .site-footer{ border-top: 1px solid var(--surface-border); margin-top: 60px; padding: 40px 0 30px; }
-.footer-grid{ display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 30px; }
+.footer-grid{ display: grid; grid-template-columns: minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); gap: 32px; margin-bottom: 30px; }
 .footer-col h4{ font-size: 13.5px; margin-bottom: 12px; color: var(--text); }
 .footer-col p{ color: var(--text-muted); font-size: 13.5px; max-width: 32ch; }
 .footer-col ul li{ margin-bottom: 8px; }
@@ -407,10 +429,11 @@ p{ margin: 0; }
   background: var(--surface-2); border: 1px solid var(--surface-border); color: var(--text-muted);
 }
 
-.game-layout{ display: grid; grid-template-columns: 1fr 300px; gap: 26px; padding: 24px 0 56px; align-items: start; }
+.game-layout{ display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 26px; padding: 24px 0 56px; align-items: start; }
 
 .game-stage{
-  background: var(--surface); border: 1px solid var(--surface-border); border-radius: var(--radius-lg);
+  background: var(--surface-glass); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid var(--surface-border); border-radius: var(--radius-lg);
   padding: 20px; box-shadow: var(--shadow-card);
 }
 .stage-topbar{ display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
@@ -480,7 +503,8 @@ p{ margin: 0; }
 
 .side-panel{ display: flex; flex-direction: column; gap: 18px; }
 .panel-card{
-  background: var(--surface); border: 1px solid var(--surface-border); border-radius: var(--radius-md);
+  background: var(--surface-glass); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid var(--surface-border); border-radius: var(--radius-md);
   padding: 18px; box-shadow: var(--shadow-card);
 }
 .panel-card h3{ font-size: 14.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
@@ -591,19 +615,34 @@ p{ margin: 0; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 980px){
-  .hero .container{ grid-template-columns: 1fr; }
+  .hero .container{ grid-template-columns: minmax(0, 1fr); }
   .hero-screen{ order: -1; max-width: 420px; margin: 0 auto; }
-  .footer-grid{ grid-template-columns: 1fr 1fr; }
-  .game-layout{ grid-template-columns: 1fr; }
+  .footer-grid{ grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .game-layout{ grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 760px){
   .main-nav{ display: none; }
   .nav-toggle{ display: inline-flex; }
-  .search-input{ width: 150px; }
-  .game-grid{ grid-template-columns: 1fr; }
-  .footer-grid{ grid-template-columns: 1fr 1fr; gap: 22px; }
+  .header-actions{ gap: 6px; }
+  .search-input{ width: 108px; }
+  .search-input:focus{ width: 140px; }
+  #randomBtn{ display: none; } /* moved into the hamburger menu below, header has no room for it */
+  .game-grid{ grid-template-columns: minmax(0, 1fr); }
+  .footer-grid{ grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 22px; }
   .hero{ padding: 34px 0 24px; }
+  /* backdrop-filter is expensive to composite on phone GPUs, especially across
+     several stacked panels — fall back to a plain solid surface on mobile. */
+  .game-stage, .panel-card{
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+    background: var(--surface);
+  }
+}
+
+@media (max-width: 400px){
+  .brand-name{ display: none; } /* keep just the CG badge on very narrow phones */
+  .search-input{ width: 84px; }
+  .icon-btn{ width: 34px; height: 34px; }
 }
 
 .mobile-menu{
@@ -611,7 +650,11 @@ p{ margin: 0; }
   background: var(--bg); padding: 20px; overflow-y: auto;
 }
 .mobile-menu.open{ display: block; }
-.mobile-menu a{ display: block; padding: 14px 6px; font-size: 17px; border-bottom: 1px solid var(--surface-border); }
+.mobile-menu a, .mobile-menu button{
+  display: block; width: 100%; padding: 14px 6px; font-size: 17px; text-align: left;
+  border: none; border-bottom: 1px solid var(--surface-border); background: none; color: var(--text);
+  font-family: var(--font-body); cursor: pointer;
+}
 
 .skip-link{
   position: absolute; left: -999px; top: 0; background: var(--gold); color: #201200;
@@ -622,6 +665,7 @@ p{ margin: 0; }
 </style>
 </head>
 <body>
+<div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
 <a href="#main" class="skip-link">Skip to content</a>
 
 <header class="site-header">
@@ -661,6 +705,7 @@ p{ margin: 0; }
   <a href="index.html#categories">Categories</a>
   <a href="index.html#favorites">Favorites</a>
   <a href="index.html#about">About</a>
+  <button type="button" id="mobileRandomBtn">🎲 Random Game</button>
 </div>
 
 <main id="main">
@@ -3742,6 +3787,12 @@ window.GameModules.paddleduel = function (container, api) {
     const pick = others[Math.floor(Math.random() * others.length)];
     window.location.href = `game.html?id=${pick.id}`;
   });
+  const mobileRandomBtn = document.getElementById("mobileRandomBtn");
+  if (mobileRandomBtn) mobileRandomBtn.addEventListener("click", () => {
+    const others = GAMES_DATA.filter(g => g.id !== gameId);
+    const pick = others[Math.floor(Math.random() * others.length)];
+    window.location.href = `game.html?id=${pick.id}`;
+  });
 
   /* ---------- header text ---------- */
   document.title = `${game.title} — Classic Games`;
@@ -3770,16 +3821,17 @@ window.GameModules.paddleduel = function (container, api) {
   /* ---------- sound ---------- */
   const soundToggle = document.getElementById("soundToggle");
   const muteBtn = document.getElementById("muteBtn");
+  let sfxMuted = Store.isMuted(); // session source of truth — Store is persistence, not the live state
   function refreshMuteUI(){
-    const muted = Store.isMuted();
-    soundToggle.checked = !muted;
-    muteBtn.innerHTML = muted
+    soundToggle.checked = !sfxMuted;
+    muteBtn.innerHTML = sfxMuted
       ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>'
       : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>';
   }
+  function setSfxMuted(muted){ sfxMuted = muted; Store.setMuted(muted); refreshMuteUI(); }
   refreshMuteUI();
-  soundToggle.addEventListener("change", () => { Store.setMuted(!soundToggle.checked); refreshMuteUI(); });
-  muteBtn.addEventListener("click", () => { Store.setMuted(!Store.isMuted()); refreshMuteUI(); });
+  soundToggle.addEventListener("change", () => setSfxMuted(!soundToggle.checked));
+  muteBtn.addEventListener("click", () => setSfxMuted(!sfxMuted));
 
   /* ---------- difficulty ---------- */
   const difficultyCard = document.getElementById("difficultyCard");

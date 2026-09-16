@@ -7,8 +7,10 @@
 <meta name="description" content="A modern online arcade of timeless browser games — Tetris, Chess, Snake, Minesweeper and more. No download, no account.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕹️</text></svg>">
 <link rel="stylesheet" href="css/styles.css">
+
 </head>
 <body>
+<div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
 <a href="#main" class="skip-link">Skip to content</a>
 
 <header class="site-header">
@@ -50,6 +52,7 @@
   <a href="#categories">Categories</a>
   <a href="#favorites">Favorites</a>
   <a href="#about">About</a>
+  <button type="button" id="mobileRandomBtn">🎲 Random Game</button>
 </div>
 
 <div class="ticker" aria-hidden="true"><div class="ticker-track" id="tickerTrack"></div></div>
@@ -799,6 +802,11 @@ CG.initCardTilt = function (scopeEl) {
 
   /* ---------- random game ---------- */
   document.getElementById("randomBtn").addEventListener("click", () => {
+    const pick = GAMES_DATA[Math.floor(Math.random() * GAMES_DATA.length)];
+    window.location.href = `game.html?id=${pick.id}`;
+  });
+  const mobileRandomBtn = document.getElementById("mobileRandomBtn");
+  if (mobileRandomBtn) mobileRandomBtn.addEventListener("click", () => {
     const pick = GAMES_DATA[Math.floor(Math.random() * GAMES_DATA.length)];
     window.location.href = `game.html?id=${pick.id}`;
   });
