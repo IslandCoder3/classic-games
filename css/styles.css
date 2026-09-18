@@ -547,37 +547,67 @@ p{ margin: 0; }
 
 .ttt-board{ grid-template-columns: repeat(3, var(--cell, 84px)); grid-template-rows: repeat(3, var(--cell, 84px)); }
 .ttt-board .cell{ font-size: calc(var(--cell, 84px) * 0.48); font-family: var(--font-display); border-radius: 10px; }
-.ttt-board .cell.x{ color: var(--cyan); }
-.ttt-board .cell.o{ color: var(--gold); }
+.ttt-board .cell.x, .ttt-board .cell.o{ transition: transform .15s ease; }
+.ttt-board .cell.x:hover, .ttt-board .cell.o:hover{ transform: scale(1.12) translateY(-2px); }
+.ttt-board .cell.x{ color: var(--cyan); text-shadow: 0 1px 0 #bffbff, 0 3px 0 #1a6b74, 0 5px 2px #0d3438, 0 8px 14px rgba(0,0,0,0.55); }
+.ttt-board .cell.o{ color: var(--gold); text-shadow: 0 1px 0 #ffe9b8, 0 3px 0 #a3730f, 0 5px 2px #5c4108, 0 8px 14px rgba(0,0,0,0.55); }
 .ttt-board .cell.win{ background: rgba(74,222,128,0.18); border-color: var(--green); }
 
-.c4-board{ background: #12193a; padding: 10px; border-radius: 14px; display: inline-grid; gap: min(1.6vw, 8px); grid-template-columns: repeat(7, var(--cell, 46px)); grid-template-rows: repeat(6, var(--cell, 46px)); }
+.c4-board{ background: #12193a; padding: 10px; border-radius: 14px; display: inline-grid; gap: min(1.6vw, 8px); grid-template-columns: repeat(7, var(--cell, 46px)); grid-template-rows: repeat(6, var(--cell, 46px)); box-shadow: inset 0 3px 10px rgba(0,0,0,0.5); }
 .c4-cell{
   width: var(--cell, 46px); height: var(--cell, 46px); border-radius: 50%; background: #05070f;
   border: 1px solid var(--surface-border); cursor: pointer; position: relative;
+  box-shadow: inset 0 3px 5px rgba(0,0,0,0.65);
 }
 .c4-cell.p1::after, .c4-cell.p2::after{
-  content: ""; position: absolute; inset: 3px; border-radius: 50%;
+  content: ""; position: absolute; inset: 7%; border-radius: 50%;
+  box-shadow:
+    inset 0 3px 4px rgba(255,255,255,0.5), inset 0 -6px 8px rgba(0,0,0,0.4),
+    inset 0 0 0 2px rgba(0,0,0,0.15),
+    0 5px 3px -1px rgba(0,0,0,0.35), 0 9px 12px -3px rgba(0,0,0,0.55);
+  transition: transform .15s ease;
 }
-.c4-cell.p1::after{ background: radial-gradient(circle at 32% 28%, #ffe6a8, var(--gold)); }
-.c4-cell.p2::after{ background: radial-gradient(circle at 32% 28%, #b9ffe9, var(--cyan)); }
+.c4-cell.p1:hover::after, .c4-cell.p2:hover::after{ transform: translateY(-3px); }
+.c4-cell.p1::after{ background: radial-gradient(circle at 32% 26%, #fff3d0, var(--gold) 55%, #c98a12 100%); }
+.c4-cell.p2::after{ background: radial-gradient(circle at 32% 26%, #e3fffc, var(--cyan) 55%, #1a97a8 100%); }
 
 .ms-board{ display: inline-grid; gap: 2px; background: #05070f; padding: 8px; border-radius: 10px; }
 .ms-cell{
   width: var(--cell, 28px); height: var(--cell, 28px); font-size: calc(var(--cell, 28px) * 0.46); border-radius: 4px;
   background: var(--surface-2); border: 1px solid var(--surface-border);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -2px 3px rgba(0,0,0,0.3);
   display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 700;
 }
-.ms-cell.open{ background: #0e1224; cursor: default; }
+.ms-cell.open{ background: #0e1224; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); cursor: default; }
 .ms-cell.mine{ background: var(--red); }
 .ms-cell.flag{ color: var(--gold); }
 
 .chess-board{ display: inline-grid; grid-template-columns: repeat(8, var(--cell, 46px)); grid-template-rows: repeat(8, var(--cell, 46px)); border-radius: 10px; overflow: hidden; border: 1px solid var(--surface-border); }
-.chess-cell{ display: flex; align-items: center; justify-content: center; font-size: calc(var(--cell, 46px) * 0.64); cursor: pointer; position: relative; }
+.chess-cell{
+  display: flex; align-items: center; justify-content: center; font-size: calc(var(--cell, 46px) * 0.64); cursor: pointer; position: relative;
+}
 .chess-cell.light{ background: #2b3260; }
 .chess-cell.dark{ background: #171c38; }
+/* Pieces read as carved, lit tokens rather than flat glyphs — a warm raised
+   ivory finish for White, a dark polished finish with a light rim (so it
+   doesn't vanish into the dark squares) for Black. Both lift slightly on
+   hover/selection for a tactile, "sitting above the board" feel. */
+.chess-cell.piece-w, .chess-cell.piece-b{ transition: transform .15s ease; }
+.chess-cell.piece-w:hover, .chess-cell.piece-b:hover{ transform: translateY(-3px) scale(1.08); }
+.chess-cell.piece-w{
+  color: #f7f2e4;
+  text-shadow: 0 1px 0 #fff, 0 -1px 1px rgba(0,0,0,0.25), 0 3px 1px #d8cba8, 0 6px 3px rgba(0,0,0,0.35), 0 10px 14px rgba(0,0,0,0.6);
+}
+.chess-cell.piece-b{
+  color: #20232f;
+  text-shadow:
+    -1px -1px 0 rgba(200,208,240,0.5), 1px -1px 0 rgba(200,208,240,0.5),
+    -1px 1px 0 rgba(200,208,240,0.35), 1px 1px 0 rgba(200,208,240,0.35),
+    0 3px 1px rgba(0,0,0,0.6), 0 9px 13px rgba(0,0,0,0.65);
+}
 .chess-cell.selected{ box-shadow: inset 0 0 0 3px var(--gold); }
-.chess-cell.move-hint::after{ content:""; width: 28%; height: 28%; border-radius: 50%; background: rgba(255,194,75,0.55); position: absolute; }
+.chess-cell.selected.piece-w, .chess-cell.selected.piece-b{ transform: translateY(-5px) scale(1.12); }
+.chess-cell.move-hint::after{ content:""; width: 28%; height: 28%; border-radius: 50%; background: rgba(255,194,75,0.55); position: absolute; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
 .chess-cell.capture-hint{ box-shadow: inset 0 0 0 3px rgba(251,93,93,0.7); }
 .chess-cell.last-move{ background-color: rgba(182,255,63,0.28) !important; }
 .chess-cell.in-check{ background-color: rgba(251,93,93,0.5) !important; }
@@ -586,16 +616,25 @@ p{ margin: 0; }
 .checkers-cell{ display: flex; align-items: center; justify-content: center; cursor: default; position: relative; }
 .checkers-cell.light{ background: #2b3260; }
 .checkers-cell.dark{ background: #171c38; cursor: pointer; }
-.checkers-cell.selected{ box-shadow: inset 0 0 0 3px var(--gold); }
-.checkers-cell.move-hint::after{ content:""; width: 28%; height: 28%; border-radius: 50%; background: rgba(74,222,128,0.6); position: absolute; }
-.checker-piece{ width: calc(var(--cell, 46px) * 0.74); height: calc(var(--cell, 46px) * 0.74); border-radius: 50%; }
-.checker-piece.p1{ background: radial-gradient(circle at 32% 28%, #ffe6a8, var(--gold)); }
-.checker-piece.p2{ background: radial-gradient(circle at 32% 28%, #dfe4ff, #6b74b8); }
-.checker-piece.king::after{ content:"★"; display:flex; align-items:center; justify-content:center; height:100%; color:#3a2a00; font-size: calc(var(--cell, 46px) * 0.32); }
+.checkers-cell.selected .checker-piece{ transform: translateY(-4px) scale(1.1); box-shadow: inset 0 3px 4px rgba(255,255,255,0.4), inset 0 -5px 7px rgba(0,0,0,0.4), 0 10px 14px rgba(0,0,0,0.55); }
+.checkers-cell.move-hint::after{ content:""; width: 28%; height: 28%; border-radius: 50%; background: rgba(74,222,128,0.6); position: absolute; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+.checker-piece{
+  width: calc(var(--cell, 46px) * 0.74); height: calc(var(--cell, 46px) * 0.74); border-radius: 50%;
+  box-shadow:
+    inset 0 3px 4px rgba(255,255,255,0.4), inset 0 -5px 7px rgba(0,0,0,0.4),
+    inset 0 0 0 3px rgba(0,0,0,0.18),
+    0 5px 3px -1px rgba(0,0,0,0.35), 0 9px 12px -2px rgba(0,0,0,0.55);
+  border: 1px solid rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.checkers-cell.dark:hover .checker-piece{ transform: translateY(-3px); }
+.checker-piece.p1{ background: radial-gradient(circle at 32% 26%, #fff3d0, var(--gold) 55%, #c98a12 100%); }
+.checker-piece.p2{ background: radial-gradient(circle at 32% 26%, #f2f4ff, #8b93c9 55%, #565f96 100%); }
+.checker-piece.king::after{ content:"★"; display:flex; align-items:center; justify-content:center; height:100%; color:#3a2a00; font-size: calc(var(--cell, 46px) * 0.32); text-shadow: 0 1px 0 rgba(255,255,255,0.3); }
 
 .bp-board{ display: inline-grid; gap: 3px; background: #05070f; padding: 8px; border-radius: 10px; grid-template-columns: repeat(8, var(--cell, 34px)); grid-template-rows: repeat(8, var(--cell, 34px)); }
 .bp-cell{ width: var(--cell, 34px); height: var(--cell, 34px); border-radius: 5px; background: var(--surface-2); border: 1px solid var(--surface-border); }
-.bp-cell.filled{ background: linear-gradient(135deg, var(--violet), #6b4bff); border-color: transparent; }
+.bp-cell.filled{ background: linear-gradient(135deg, var(--violet), #6b4bff); border-color: transparent; box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -3px 4px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.3); }
 .bp-tray{ display: flex; gap: 14px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
 .bp-piece{ display: inline-grid; gap: 2px; padding: 6px; border-radius: 8px; cursor: grab; background: var(--surface-2); border: 1px solid var(--surface-border); }
 .bp-piece.dragging{ opacity: 0.5; }
